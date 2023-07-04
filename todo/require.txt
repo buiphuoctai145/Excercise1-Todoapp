@@ -1,0 +1,33 @@
+1. có 2 cột, 1 cột todo 1 cột là in progress
+2. task item thì: 
+    - create task: - lấy input trong modal rồi show trong table
+                - field ft cột
+                - show new task lên đầu taskList
+                
+
+    - flag task: thay background
+
+    - Pin task : - nếu task đưỢc pin nằm ở đầu tiên 
+                - task pin sau cùng sẽ lên đầu tiên 
+                - [ 1, 2, 3, 4 ] pin thằng 4 
+                -> [ 4, 1, 2, 3] pin thằng 2
+                -> [ 2, 4, 1, 3] 
+                => 3 method: - findIndex() => vị trí của task Item
+                                            splice() đẻ remove taskitem tại vị trí đÓ 
+                                            unshift để move cái taskItem lên đầu mảng
+
+
+3. category: dropdown list trong modal
+            - input text "abc" -> add task to "abc" category
+
+4. Move task qua lại giữa 2 cột: 
+chọn trước 1 task   - findIndex() của task đưỢc chọn
+                    - dùng hàm filter(item) tạo mảng mới
+                    - move qua thì để ở đầu cột -> selected task index = 0
+                    - key index cho cột kia 
+                    - splice() to remove ở cột cũ
+
+5. Move task up down: - findIndex()
+                    - moveUp -> index + 1   (replace instead)
+                    - moveDown -> index - 1 (replace instead)
+                    
