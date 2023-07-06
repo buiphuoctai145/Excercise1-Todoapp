@@ -2,16 +2,25 @@ import { useRef, useState } from "react";
 import { ModalCreateTask } from "../components/modals/ModalCreateTask";
 import { TodoItem } from "../components/todoItems/TodoItem";
 import { useTodoList } from "../hooks/useTodoList";
+import { ModalLogin } from "../components/modals/ModalLogin";
 
 export const TodoList = () => {
   const [categories, setCategories] = useState<string[]>(["homework", "job"]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalCreateTaskOpen, setIsModalCreateTaskOpen] = useState(false);
+  const [isModalLoginOpen, setIsModalLoginOpen] = useState(false);
   const [isCheckboxesVisible, setIsCheckboxesVisible] = useState(false);
-  const leftSideSelectedTodoItems = useRef<Set<number>>(new Set())
-  const rightSideSelectedTodoItems = useRef<Set<number>>(new Set())
+  const leftSideSelectedTodoItems = useRef<Set<number>>(new Set());
+  const rightSideSelectedTodoItems = useRef<Set<number>>(new Set());
 
   //   const [openModalEditTask, setOpenModalEditTask] = useState<Todo[]>([]);
-  const { completedTasks, incompletedTasks, addNewTodoItem, makeTodoItemCompleted, toggleTodoItemFlag, moveTodoItemUpOrDown } = useTodoList([
+  const {
+    completedTasks,
+    incompletedTasks,
+    addNewTodoItem,
+    makeTodoItemCompleted,
+    toggleTodoItemFlag,
+    moveTodoItemUpOrDown,
+  } = useTodoList([
     {
       id: "1",
       name: "hoc",
@@ -40,14 +49,18 @@ export const TodoList = () => {
       id: "4",
       name: "quet nha",
       description: "quet nha",
-      category: "ejoy",
+      category: "enjoy",
       isCompleted: false,
       isFlagged: false,
     },
-  ])
+  ]);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const toggleCreateTaskModal = () => {
+    setIsModalCreateTaskOpen(!isModalCreateTaskOpen);
+  };
+
+  const toggleLoginModal = () => {
+    setIsModalLoginOpen(!isModalLoginOpen);
   };
 
   const _addCategory = (category: string) => {
@@ -58,8 +71,12 @@ export const TodoList = () => {
   };
 
   const _onCreate = (name: string, description: string, category: string) => {
-    addNewTodoItem(name, description, category)
+    addNewTodoItem(name, description, category);
     _addCategory(category);
+  };
+
+  const _onLogin = (userName:string, password:string) => {
+
   };
 
   const showEditTask = () => {
@@ -71,63 +88,80 @@ export const TodoList = () => {
   const getOnLeftSideCheckboxCheckedCallback = (index: number) => {
     return (isChecked: boolean) => {
       if (isChecked) {
-        leftSideSelectedTodoItems.current.add(index)
+        leftSideSelectedTodoItems.current.add(index);
       } else {
-        leftSideSelectedTodoItems.current.delete(index)
+        leftSideSelectedTodoItems.current.delete(index);
       }
-    }
-  }
+    };
+  };
 
   const getOnRightSideCheckboxCheckedCallback = (index: number) => {
     return (isChecked: boolean) => {
       if (isChecked) {
-        rightSideSelectedTodoItems.current.add(index)
+        rightSideSelectedTodoItems.current.add(index);
       } else {
-        rightSideSelectedTodoItems.current.delete(index)
+        rightSideSelectedTodoItems.current.delete(index);
       }
-    }
-  }
+    };
+  };
 
-  const getOnComleteTaskButtonClickCallback = (index: number, isCompleted: boolean) => {
+  const getOnComleteTaskButtonClickCallback = (
+    index: number,
+    isCompleted: boolean
+  ) => {
     return () => {
-      makeTodoItemCompleted(index, isCompleted)
-    }
-  }
+      makeTodoItemCompleted(index, isCompleted);
+    };
+  };
 
-  const getMoveTaskItemCallback = (index: number, isCompleted: boolean, moveUp?: boolean) => {
+  const getMoveTaskItemCallback = (
+    index: number,
+    isCompleted: boolean,
+    moveUp?: boolean
+  ) => {
     return () => {
-      moveTodoItemUpOrDown(index, isCompleted, moveUp)
-    }
-  }
+      moveTodoItemUpOrDown(index, isCompleted, moveUp);
+    };
+  };
 
   const getMakeTasksCompleteCallback = (isCompleted: boolean) => {
     return () => {
-      const indexesList = isCompleted ? leftSideSelectedTodoItems.current : rightSideSelectedTodoItems.current
+      const indexesList = isCompleted
+        ? leftSideSelectedTodoItems.current
+        : rightSideSelectedTodoItems.current;
 
-      indexesList.forEach(index => {
-        makeTodoItemCompleted(index, isCompleted)
-      })
-    }
-  }
+      indexesList.forEach((index) => {
+        makeTodoItemCompleted(index, isCompleted);
+      });
+    };
+  };
 
   const getOnFlagCallback = (index: number, isCompleted: boolean) => {
     return () => {
-      toggleTodoItemFlag(index, isCompleted)
-    }
+      toggleTodoItemFlag(index, isCompleted);
+    };
   };
 
   return (
     <div>
       <ModalCreateTask
         categories={categories}
-        isVisible={isModalOpen}
+        isVisible={isModalCreateTaskOpen}
         onCreate={_onCreate}
-        onClose={() => setIsModalOpen(false)} />
+        onClose={() => setIsModalCreateTaskOpen(false)}
+      />
+      <ModalLogin isVisible={isModalLoginOpen} onClose={() => setIsModalLoginOpen(false)} onLogin={_onLogin}/>
+      <button
+        className="mt-3 bg-blue-600 py-1 px-5 rounded-md text-white"
+        onClick={toggleLoginModal}
+      >
+        Login
+      </button>
       <div className="header-container test text-center">
         <h3>Todo List</h3>
         <button
           className="mt-3 bg-blue-600 py-1 px-5 rounded-md text-white"
-          onClick={toggleModal}
+          onClick={toggleCreateTaskModal}
         >
           Create task
         </button>
@@ -147,32 +181,30 @@ export const TodoList = () => {
                 isCheckboxVisible={isCheckboxesVisible}
                 actionButtonText=">"
                 onCheckboxChecked={getOnLeftSideCheckboxCheckedCallback(index)}
-                onActionButtonClick={getOnComleteTaskButtonClickCallback(index, true)}
+                onActionButtonClick={getOnComleteTaskButtonClickCallback(
+                  index,
+                  true
+                )}
                 onFlag={getOnFlagCallback(index, false)}
                 onMoveUpButtonClick={getMoveTaskItemCallback(index, false)}
-                onMoveDownButtonClick={getMoveTaskItemCallback(index, false, false)} />
+                onMoveDownButtonClick={getMoveTaskItemCallback(
+                  index,
+                  false,
+                  false
+                )}
+              />
             ))}
           </tbody>
         </table>
-        <div
-          style={{
-            textAlign: "center",
-          }}
-        >
+        <div className="text-left ">
           <button
-            style={{
-              width: "100%",
-              marginBottom: "10px",
-            }}
+            className="w-full bg-blue-500 text-white my-2 px-3 rounded-md"
             onClick={showEditTask}
           >
             Edit
           </button>
           <button
-            style={{
-              padding: "20px 5px",
-              marginRight: "10px",
-            }}
+            className="mt-3 bg-blue-600 py-1 px-5 rounded-md text-white"
             onClick={getMakeTasksCompleteCallback(false)}
           >{`<`}</button>
           <button
@@ -196,10 +228,18 @@ export const TodoList = () => {
                 isCheckboxVisible={isCheckboxesVisible}
                 actionButtonText="<"
                 onCheckboxChecked={getOnRightSideCheckboxCheckedCallback(index)}
-                onActionButtonClick={getOnComleteTaskButtonClickCallback(index, false)}
+                onActionButtonClick={getOnComleteTaskButtonClickCallback(
+                  index,
+                  false
+                )}
                 onFlag={getOnFlagCallback(index, true)}
                 onMoveUpButtonClick={getMoveTaskItemCallback(index, true)}
-                onMoveDownButtonClick={getMoveTaskItemCallback(index, true, false)} />
+                onMoveDownButtonClick={getMoveTaskItemCallback(
+                  index,
+                  true,
+                  false
+                )}
+              />
             ))}
           </tbody>
         </table>

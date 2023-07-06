@@ -11,7 +11,6 @@ export const useTodoList = (todoItems: Todo[]) => {
         const task: Todo = {
             id, name, description, category, isCompleted: false
         }
-
         setIncompletedTasks([...incompletedTasks, { ...task }])
     }
 
