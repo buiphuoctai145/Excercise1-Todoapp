@@ -1,8 +1,46 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ModalCreateTask } from "../components/modals/ModalCreateTask";
 import { TodoItem } from "../components/todoItems/TodoItem";
 import { useTodoList } from "../hooks/useTodoList";
 import { ModalLogin } from "../components/modals/ModalLogin";
+import { Todo } from "../models/todo";
+
+const User1Todo = [
+  {
+    id: "1",
+    name: "hoc",
+    description: "study",
+    category: "homework",
+    isCompleted: false,
+    isFlagged: true,
+  },
+  {
+    id: "2",
+    name: "react",
+    description: "study",
+    category: "react",
+    isCompleted: true,
+    isFlagged: false,
+  },
+]
+const User2Todo = [
+  {
+    id: "1",
+    name: "di nhau",
+    description: "nhau",
+    category: "enjoy",
+    isCompleted: false,
+    isFlagged: true,
+  },
+  {
+    id: "1",
+    name: "di nhau",
+    description: "nhau",
+    category: "enjoy",
+    isCompleted: false,
+    isFlagged: true,
+  },
+]
 
 export const TodoList = () => {
   const [categories, setCategories] = useState<string[]>(["homework", "job"]);
@@ -11,6 +49,8 @@ export const TodoList = () => {
   const [isCheckboxesVisible, setIsCheckboxesVisible] = useState(false);
   const leftSideSelectedTodoItems = useRef<Set<number>>(new Set());
   const rightSideSelectedTodoItems = useRef<Set<number>>(new Set());
+  const [loggedInUser, setLoggedInUser] = useState<string | null>(localStorage.getItem('auth'));
+  const [todoData, setTodoData] = useState<Todo[]>([]);
 
   //   const [openModalEditTask, setOpenModalEditTask] = useState<Todo[]>([]);
   const {
@@ -20,40 +60,15 @@ export const TodoList = () => {
     makeTodoItemCompleted,
     toggleTodoItemFlag,
     moveTodoItemUpOrDown,
-  } = useTodoList([
-    {
-      id: "1",
-      name: "hoc",
-      description: "study",
-      category: "homework",
-      isCompleted: false,
-      isFlagged: true,
-    },
-    {
-      id: "2",
-      name: "an com",
-      description: "an com",
-      category: "housework",
-      isCompleted: true,
-      isFlagged: true,
-    },
-    {
-      id: "3",
-      name: "nau com",
-      description: "nau com",
-      category: "housework",
-      isCompleted: true,
-      isFlagged: false,
-    },
-    {
-      id: "4",
-      name: "quet nha",
-      description: "quet nha",
-      category: "enjoy",
-      isCompleted: false,
-      isFlagged: false,
-    },
-  ]);
+  } = useTodoList(todoData);
+
+  useEffect(() => {
+    if(loggedInUser === '1') {
+      setTodoData(User1Todo)
+    } else {
+      setTodoData(User2Todo)
+    }
+  }, [loggedInUser])
 
   const toggleCreateTaskModal = () => {
     setIsModalCreateTaskOpen(!isModalCreateTaskOpen);
@@ -75,8 +90,8 @@ export const TodoList = () => {
     _addCategory(category);
   };
 
-  const _onLogin = (userName:string, password:string) => {
-
+  const _onLogin = (userID: string) => {
+    setLoggedInUser(userID)
   };
 
   const showEditTask = () => {
@@ -142,6 +157,7 @@ export const TodoList = () => {
     };
   };
 
+
   return (
     <div>
       <ModalCreateTask
@@ -174,7 +190,7 @@ export const TodoList = () => {
             </tr>
           </thead>
           <tbody>
-            {incompletedTasks.map((task, index) => (
+            {completedTasks.map((task, index) => (
               <TodoItem
                 key={index}
                 task={task}
@@ -221,7 +237,7 @@ export const TodoList = () => {
             </tr>
           </thead>
           <tbody>
-            {completedTasks.map((task, index) => (
+            {incompletedTasks.map((task, index) => (
               <TodoItem
                 key={index}
                 task={task}

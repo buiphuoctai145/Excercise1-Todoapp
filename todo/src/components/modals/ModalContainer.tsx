@@ -7,7 +7,6 @@ export type ModalProps = {
   submitButtonText: string;
   onSubmit: () => void;
   onClose: () => void;
-  backdrop?: boolean;
 }
 
 export const ModalContainer = ({
@@ -17,7 +16,6 @@ export const ModalContainer = ({
   submitButtonText,
   onSubmit,
   onClose,
-  backdrop,
 }: ModalProps) => {
   
   if (!isVisible) {

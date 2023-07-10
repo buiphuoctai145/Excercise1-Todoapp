@@ -1,10 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Todo } from "../models/todo"
 
 export const useTodoList = (todoItems: Todo[]) => {
     const [completedTasks, setCompletedTasks] = useState<Todo[]>(todoItems.filter(e => e.isCompleted))
     const [incompletedTasks, setIncompletedTasks] = useState<Todo[]>(todoItems.filter(e => !e.isCompleted))
 
+    useEffect(() => {
+      setCompletedTasks(todoItems.filter(e => e.isCompleted))
+      setIncompletedTasks(todoItems.filter(e => !e.isCompleted))
+    }, [todoItems])
+    
     const addNewTodoItem = (name: string, description: string, category: string) => {
         const id = (completedTasks.length + incompletedTasks.length + 1).toString()
 

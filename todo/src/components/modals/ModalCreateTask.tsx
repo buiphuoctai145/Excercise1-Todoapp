@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { CancelButton } from "../buttons/CancelButton";
 import { ModalContainer } from "./ModalContainer";
 
 export const ModalCreateTask = ({
